@@ -8,6 +8,7 @@ namespace EZAssets.Scripts.Animation
     {
         [SerializeField] private Animator _animator;
 
+
         public void PlayAnimation(CharacterAnimationState state)
         {
             switch (state)

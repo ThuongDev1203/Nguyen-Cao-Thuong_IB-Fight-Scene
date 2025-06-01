@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace EZAssets.Scripts.Data
 {
-    [SelectionBase]
+    [Serializable]
     public class EnemyData
     {
         [Header("Data")]
