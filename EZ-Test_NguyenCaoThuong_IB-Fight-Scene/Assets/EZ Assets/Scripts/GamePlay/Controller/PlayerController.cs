@@ -23,7 +23,7 @@ namespace EZAssets.Scripts.GamePlay.Controller
 
         void Start()
         {
-            _animatorHandler.PlayAnimation(CharacterAnimationState.Idle);
+            PlayIdleAnimation();
         }
 
         void Update()
@@ -35,72 +35,100 @@ namespace EZAssets.Scripts.GamePlay.Controller
         {
             if (Input.touchCount > 0)
             {
-                Touch touch = Input.GetTouch(0);
+                HandleTouch();
+            }
+            else
+            {
+                HandleMouse();
+            }
+        }
 
-                switch (touch.phase)
+        private void HandleTouch()
+        {
+            Touch touch = Input.GetTouch(0);
+
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    _touchStartPos = touch.position;
+                    _isSwiping = true;
+                    break;
+
+                case TouchPhase.Ended:
+                    if (!_isSwiping) return;
+                    HandleSwipeOrTap(touch.position);
+                    _isSwiping = false;
+                    break;
+            }
+        }
+
+        private void HandleMouse()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                _touchStartPos = Input.mousePosition;
+                _isSwiping = true;
+            }
+            else if (Input.GetMouseButtonUp(0) && _isSwiping)
+            {
+                HandleSwipeOrTap(Input.mousePosition);
+                _isSwiping = false;
+            }
+        }
+
+        private void HandleSwipeOrTap(Vector2 endPos)
+        {
+            Vector2 swipeDelta = endPos - _touchStartPos;
+
+            if (swipeDelta.magnitude >= _minSwipeDistance)
+            {
+                if (swipeDelta.y > 0 && Mathf.Abs(swipeDelta.y) > Mathf.Abs(swipeDelta.x))
                 {
-                    case TouchPhase.Began:
-                        _touchStartPos = touch.position;
-                        _isSwiping = true;
-                        break;
-
-                    case TouchPhase.Ended:
-                        if (!_isSwiping) return;
-
-                        Vector2 touchEndPos = touch.position;
-                        Vector2 swipeDelta = touchEndPos - _touchStartPos;
-
-                        if (swipeDelta.magnitude >= _minSwipeDistance)
-                        {
-                            if (swipeDelta.x > 0 && Mathf.Abs(swipeDelta.x) > Mathf.Abs(swipeDelta.y))
-                            {
-                                _animatorHandler?.PlayAnimation(CharacterAnimationState.KidneyPunchLeft);
-                            }
-                            else
-                            {
-                                _animatorHandler?.PlayAnimation(CharacterAnimationState.KidneyPunchRight);
-                            }
-                        }
-                        else
-                        {
-                            _animatorHandler?.PlayAnimation(CharacterAnimationState.HeadPunch);
-                        }
-
-                        _isSwiping = false;
-                        break;
+                    PlayStomachPunch();
+                }
+                else if (swipeDelta.x > 0 && Mathf.Abs(swipeDelta.x) > Mathf.Abs(swipeDelta.y))
+                {
+                    PlayKidneyPunchLeft();
+                }
+                else if (swipeDelta.x < 0 && Mathf.Abs(swipeDelta.x) > Mathf.Abs(swipeDelta.y))
+                {
+                    PlayKidneyPunchRight();
+                }
+                else
+                {
+                    PlayHeadPunch();
                 }
             }
             else
             {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    _touchStartPos = Input.mousePosition;
-                    _isSwiping = true;
-                }
-                else if (Input.GetMouseButtonUp(0) && _isSwiping)
-                {
-                    Vector2 touchEndPos = Input.mousePosition;
-                    Vector2 swipeDelta = touchEndPos - _touchStartPos;
-
-                    if (swipeDelta.magnitude >= _minSwipeDistance)
-                    {
-                        if (swipeDelta.x > 0 && Mathf.Abs(swipeDelta.x) > Mathf.Abs(swipeDelta.y))
-                        {
-                            _animatorHandler?.PlayAnimation(CharacterAnimationState.KidneyPunchLeft);
-                        }
-                        else
-                        {
-                            _animatorHandler?.PlayAnimation(CharacterAnimationState.KidneyPunchRight);
-                        }
-                    }
-                    else
-                    {
-                        _animatorHandler?.PlayAnimation(CharacterAnimationState.HeadPunch);
-                    }
-
-                    _isSwiping = false;
-                }
+                PlayHeadPunch();
             }
+        }
+
+        // Animation functions
+        private void PlayIdleAnimation()
+        {
+            _animatorHandler?.PlayAnimation(CharacterAnimationState.Idle);
+        }
+
+        private void PlayKidneyPunchLeft()
+        {
+            _animatorHandler?.PlayAnimation(CharacterAnimationState.KidneyPunchLeft);
+        }
+
+        private void PlayKidneyPunchRight()
+        {
+            _animatorHandler?.PlayAnimation(CharacterAnimationState.KidneyPunchRight);
+        }
+
+        private void PlayHeadPunch()
+        {
+            _animatorHandler?.PlayAnimation(CharacterAnimationState.HeadPunch);
+        }
+
+        private void PlayStomachPunch()
+        {
+            _animatorHandler?.PlayAnimation(CharacterAnimationState.StomachPunch);
         }
     }
 }

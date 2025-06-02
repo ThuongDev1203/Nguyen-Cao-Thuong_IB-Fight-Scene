@@ -359,9 +359,11 @@
 "Assets/EZ Assets/Scripts/Animation/CharacterAnimationState.cs"
 "Assets/EZ Assets/Scripts/Data/EnemyData.cs"
 "Assets/EZ Assets/Scripts/Data/PlayerData.cs"
+"Assets/EZ Assets/Scripts/GamePlay/Controller/EnemyAI/EnemyAI.cs"
 "Assets/EZ Assets/Scripts/GamePlay/Controller/PlayerController.cs"
 "Assets/EZ Assets/Scripts/SO/EnemySO.cs"
 "Assets/EZ Assets/Scripts/SO/PlayerSO.cs"
+"Assets/EZ Assets/Scripts/Utils/GameManager.cs"
 -langversion:9.0
 /deterministic
 /optimize+
